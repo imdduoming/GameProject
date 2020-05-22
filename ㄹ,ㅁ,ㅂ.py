@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 #(ㄹ)
 player_pitch=list(input("원하시는 세자리 수를 입력하세요 : ")) #player 투수의 세자리수 입력     
 player_pitch_int=[int(i) for i in player_pitch] 
