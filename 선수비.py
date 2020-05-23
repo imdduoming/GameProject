@@ -87,7 +87,7 @@ playerOp=['선공','후공']#선공리스트
 if(playerNum==1):#1인용 게임일때
     player=rd.choice(playerOp)
     if(player=='선공'):
-        print('당신은 ',player,'이므로 먼저 공격할 차례입니다.')
+        print('당신은',player,'이므로 먼저 공격할 차례입니다.')
         #먼저 공격할 경우
         print('투수가 공 3개를 결정하는 중입니다.')
         print('기다려주세요.')
@@ -95,7 +95,7 @@ if(playerNum==1):#1인용 게임일때
 
 
     else:
-        print('당신은 ',player,'이므로 먼저 수비할 차례입니다.')
+        print('당신은',player,'이므로 먼저 수비할 차례입니다.')
         print()
         #먼저 수비할 경우
         print('당신은 투수가 되었습니다.')
