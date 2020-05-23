@@ -1,0 +1,175 @@
+import random as rd
+import datetime as dt
+
+def randpart(n):  # 합(n)을 받았을 때, 임의의 3개 한자리 수로 분할하는 함수
+    from random import randint
+    while True:
+        if n < 12:  # n은 항상 6보다 큼
+            i = 1
+            f = n - 3
+        elif n < 18:
+            i = 1
+            f = 9
+        else:
+            i = n - 17
+            f = 9
+        a = randint(i, f)
+
+        if n - a < 11:
+            i = 1
+            f = n - a - 1
+        else:
+            i = n - a - 9
+            f = 9
+
+        b = randint(i, f)
+        c = n - a - b
+        if a != b and b != c and c != a:
+            res = [a, b, c]
+            return res
+
+def com_hit(player_pitch_list):#타자가 투수가 공던지면 배트 휘두름
+    player_pitch_sum = sum(player_pitch_list)  # 세자리수 합
+    cpitch = randpart(player_pitch_sum)
+    return cpitch
+def decision(playhit, compitch):
+    bothcorrect = 0
+    numcorrect = 0  # 변수 초기화
+    for i in range(0, 3):
+        if playhit[i] == compitch[i]:  # 타자의 i번째 숫자/자리 판정
+            bothcorrect += 1    #자릿수o숫자o
+        if playhit[i] in compitch:
+            numcorrect += 1   #자릿수x 숫자o
+    if (bothcorrect == 0 and numcorrect == 0) or (bothcorrect == 0 and numcorrect == 1):
+        return 'strike'
+    elif (bothcorrect == 0 and numcorrect == 2) or (bothcorrect == 1 and numcorrect == 1):
+        return 'foul'
+    elif (bothcorrect == 0 and numcorrect == 3) or (bothcorrect == 1 and numcorrect == 2):
+        return 'singlehit'
+    elif (bothcorrect == 2 and numcorrect == 2):
+        return 'doublehit'
+    elif (bothcorrect == 1 and numcorrect == 3):
+        return 'triplehit'
+    elif bothcorrect == 3 and numcorrect == 3:
+        return 'homerun'
+'''
+def decision(c_hit, player_pitch):
+    correct = 0
+    numcorrect = 0  # 변수 초기화
+    for i in range(0, 3):
+        if player_pitch[i] == c_hit[i]:  # 타자의 i번째 숫자/자리 판정 #자리,숫자 둘다같을 때
+            correct += 1
+        elif player_pitch[i] in c_hit:#숫자만 같고 자리 다를 때
+            numcorrect += 1
+    if correct == 0 and numcorrect == 0:#투수와 타자와 같은 숫자가 한 개도 없을 때
+        return 'strike'
+    elif correct == 0 and numcorrect == 1:#투수와 타자가 같은 숫자 1개 있지만 자리가 다를 때
+        return 'singlehit'
+    elif (correct == 1 and numcorrect == 0) or (correct == 0 and numcorrect == 2) or (numcorrect == 3):#1개의 자리와 숫자가 모두 동일하거나 숫자만 2개동일 숫자만 3개동일
+        return 'doublehit'
+    elif (correct == 2 and numcorrect == 0) or (correct == 1 and numcorrect == 2):
+        return 'triplehit'
+    elif correct == 3 and numcorrect == 0:#세개 모두 자리와 숫자동일
+        return 'homerun'
+'''
+def defense_num(n=1):  # 투수의 수와 타자의 수 오차 구하기(선수비일때)
+    num_pitch = 100 * player_pitch_list[0] + 10 * player_pitch_list[1] + player_pitch_list[2]
+    num_hit = 100 * c_hit[0] + 10 * c_hit[1] + c_hit[2]
+    hit_margin = abs(num_pitch - num_hit)
+    return hit_margin
+
+
+def defense(n=1):  # 수비수가 타자의 오차 예측하기
+    defense_predict = int(input("타자의 오차값을 예측하세요 : "))
+    hit_margin = defense_num(1)  # 타자의 오차
+    defense_margin = abs(defense_predict - hit_margin)  # 수비수의 오차
+    if defense_margin <= 50:
+        print("아웃! 수비를 성공하였습니다.")
+    elif defense_margin <= 100:
+        defense()
+    else:
+        print("출루! 수비를 실패하였습니다.")
+
+def playerhit(pitch):  # 원소 3개의 리스트를 받으면 합을 표출하고, 플레이어의 반응을 얻고 플레이어가 입력한 리스트 구하기
+    com_sum = 0
+    for i in pitch:
+        com_sum += i
+    print('투수가 던진 공의 합은 {}입니다.'.format(com_sum))
+    a, b, c = input('합이 {}인 9 이하의 서로 다른 자연수 세 개를 고르시오(쉼표로 구분): '.format(com_sum)).split(',')
+    hit = [a, b, c]
+    play_hit = [int(i) for i in hit]
+    return play_hit
+
+def Cdefense_num(n=1): #투수의 수와 타자의 수 오차 구하기(컴퓨터가 수비할때)
+    num_pitch = 100*com_pitch[0] + 10*com_pitch[1] + com_pitch[2]
+    num_hit = 100*player_hit[0] + 10*player_hit[1] + player_hit[2]
+    hit_margin = abs(num_pitch - num_hit)
+    return hit_margin
+def com_defense(n=1): #수비수가 타자의 오차 예측하기
+    com_defense_predict = rd.randint(1, 987-123) #수비자(컴퓨터)가 예측한 오차값
+    hit_margin = Cdefense_num(1) #실제 오차
+    defense_margin = abs(com_defense_predict - hit_margin) #실제 값과 오차값의 차
+    #1루타, 2루타, 3루타 상황에 따라 나눌 진 추후에 결정하기로.
+    if (decision(player_hit, com_pitch) == 'strike') or (decision(player_hit, com_pitch) == 'homerun'):
+        None
+    else:
+        if defense_margin <= 50:
+            print("아웃! 수비를 성공하였습니다.")
+        elif defense_margin <= 100:
+            print('다시 한 번 수비를 시도합니다!')
+            com_defense(1)
+        else:
+            print("출루! 수비를 실패하였습니다.")
+import time
+
+print()
+print('Baseball Game Start!')
+print()
+print('Let\'s set options for the game.')
+print()
+gameNum=int(input('몇 회의 게임을 진행하실건가요?'))
+playerNum=int(input('플레이어의 수를 결정해주세요!(1or2)'))
+print()
+print('선공과 후공은 랜덤으로 주어집니다.')
+print()
+print('잠시만 기다려 주세요.')
+time.sleep(1)
+playerOp=['후공']#선공리스트
+if(playerNum==1):#1인용 게임일때
+    player=rd.choice(playerOp)
+    if(player=='선공'):
+        print('당신은 ',player,'이므로 먼저 공격할 차례입니다.',sep='')
+        #먼저 공격할 경우
+        print('투수가 공 3개를 결정하는 중입니다.')
+        print('기다려주세요.')
+        time.sleep(1)
+        print()
+        num_list = list(range(1, 10))
+        com_pitch = rd.sample(num_list, 3)  # 수비자(컴퓨터)의 투구(리스트)
+        player_hit = playerhit(com_pitch)#수비수의 합으로 공격 타자가 숫자고르기
+        print(decision(player_hit, com_pitch))
+        com_defense(1)
+
+
+
+
+    else:
+        print('')
+        print('당신은 ',player,'이므로 먼저 수비할 차례입니다.',sep='')
+        print()
+        #먼저 수비할 경우
+        print('당신은 투수가 되었습니다.')
+        player_pitch= map(int, input("원하시는 세자리 수를 입력하세요 : ").split())
+        player_pitch_list = list(player_pitch)  # player 투수의 세자리수 입력
+        player_pitch_sum = sum(player_pitch_list)
+        print("타자가 수를 선택하고 있습니다.")
+        print("잠시만 기다려주세요 ...")
+        print()
+        time.sleep(1)
+        print("타자가 수를 선택하였습니다.")
+        c_hit = com_hit(player_pitch_list)#투수의 합을 타자가 분할해서 숫자를 예측함
+        final_decision = decision(c_hit, player_pitch_list)#투수와 타자 자리 비교 결정
+        print(final_decision)
+        if (final_decision == 'singlehit') or (final_decision == 'doublehit') or (final_decision == 'triplehit'):
+            defense(1)
+
