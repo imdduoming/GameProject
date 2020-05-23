@@ -63,9 +63,33 @@ def decision(pitch, hit):
     elif correct == 3 and numcorrect == 0:
         return 'homerun'
 
-print(decision([9,1,2],['9','2','1']))
+
+print(decision([9, 1, 2], ['9', '2', '1']))
 # 일단 str으로 반환하는 함수를 짰습니다. 하지만 어떤 상황에서 str을 사용할 수 없을 수 있으니 내키시는대로 바꾸셔도 좋습니다.
 # 그리고 지금 타구의 판정 규칙을 잘 몰라서 임의로 제가 부여했습니다. 필요에 따라 변경해주세요.
 
 # 게임 흐름에 따라 (player/computer)hit -> (player/computer)pitch -> decision -> 진루
 # 이중 pitch와 decision을 만들었습니다.
+
+base = [0, 0, 0, 0, 0]  # 타석 1루 2루 3루 홈
+inning_score = 0  # 회당 플레이어 점수
+
+
+def getonbase(n=1):
+    global base, inning_score
+    base[0] = 1  # 한명을 타석으로 보냄
+    for _ in range(n):  # n루타 는 곧 n회의 한칸 진루
+        for i in range(3, -1, -1):
+            if base[i] > 0:  # i루에 사람이 있을경우 앞으로 보내야함, 3루부터 한칸씩 전진.
+                base[i] -= 1
+                base[i + 1] += 1
+    inning_score += base[4]  # 홈에 도착한 인원들을 점수로 합산
+    base[4] = 0  # 홈 초기화
+
+
+getonbase()
+print(base)
+print(inning_score)
+
+
+
