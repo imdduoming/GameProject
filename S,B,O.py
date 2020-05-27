@@ -6,13 +6,13 @@ for i in range(7):
     final_decision=input()
 
     if final_decision=='strike' or final_decision=='foul':
-        s_num=s_num+'o'
-        if (final_decision=='foul') and (s_num=='ooo'):
-            s_num='oo'
+        s_num=s_num+'●'
+        if (final_decision=='foul') and (s_num=='●●●'):
+            s_num='●●'
     if final_decision=='ball':
-        b_num=b_num+'o'
+        b_num=b_num+'●'
     if s_num=='ooo':
-        o_num=o_num+'o'
+        o_num=o_num+'●'
         s_num=''
         b_num=''
 
