@@ -20,6 +20,20 @@ c_base = Canvas(f_base)
 # 점수판
 f_score = Frame(window, width='200', height='150', relief='solid', bd='1')
 f_score.place(x=950, y=40)
+f_score.grid_propagate(0)
+f_score.columnconfigure(0, weight=1)
+f_score.rowconfigure(0, weight=1)
+f_score.columnconfigure(1, weight=1)
+f_score.rowconfigure(1, weight=1)
+team_name1 = Label(f_score, text="A TEAM")
+team_name2 = Label(f_score, text="B TEAM")
+team_name1.grid(column='0', row='0')
+team_name2.grid(column='0', row='1')
+
+team_score1 = Label(f_score, text="0점")
+team_score2 = Label(f_score, text="0점")
+team_score1.grid(column='1', row='0')
+team_score2.grid(column='1', row='1')
 
 # SBO
 
