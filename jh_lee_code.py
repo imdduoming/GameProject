@@ -89,21 +89,47 @@ def getonbase(n=1):
 
 # 점수판 테스트
 
+# from tkinter import *
+#
+# f_score = Tk()
+# f_score.geometry('200x200')
+#
+# blank_u = Label(f_score).grid(column='0', row='0', columnspan='3', sticky='news')
+#
+# team_name1 = Label(f_score, text="A TEAM")
+# team_name2 = Label(f_score, text="B TEAM")
+# team_name1.grid(column='1', row='1',sticky = 'news')
+# team_name2.grid(column='1', row='2',sticky = 'news')
+#
+# team_score1 = Label(f_score, text="0점")
+# team_score2 = Label(f_score, text="0점")
+# team_score1.grid(column='2', row='1')
+# team_score2.grid(column='2', row='2')
+#
+# f_score.mainloop()
+
+# import tkinter as tk
+#
+# class Game(tk.Frame):
+#     def __init__(self, master):
+#         super(Game, self).__init__(master)
+#         self.width = 600
+#         self.height = 400
+#         self.canvas = tk.Canvas(self, bg = '#FFFFFF', width = self.width, height = self.height)
+#         self.canvas.pack()
+#         self.pack()
+#
+# if __name__ == '__main__':
+#     root = tk.Tk()
+#     root.title('Game Title')
+#     game = Game(root)
+#     game.mainloop()
+
 from tkinter import *
 
-f_score = Tk()
-f_score.geometry('200x200')
 
-blank_u = Label(f_score).grid(column='0', row='0', columnspan='3', sticky='news')
-
-team_name1 = Label(f_score, text="A TEAM")
-team_name2 = Label(f_score, text="B TEAM")
-team_name1.grid(column='1', row='1',sticky = 'news')
-team_name2.grid(column='1', row='2',sticky = 'news')
-
-team_score1 = Label(f_score, text="0점")
-team_score2 = Label(f_score, text="0점")
-team_score1.grid(column='2', row='1')
-team_score2.grid(column='2', row='2')
-
-f_score.mainloop()
+class GameMain(Tk):
+    def __init__(self):
+        Tk.__init__(self)
+        self.geometry("1200x900+300+50")
+        self.title("야구 게임")

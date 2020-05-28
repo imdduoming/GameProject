@@ -1,5 +1,6 @@
 from tkinter import *
 
+# 절차지향으로 만든 기본적인 레이아웃
 # 가급적 place를 사용 (배경에 맞춰야 할 수도 있음)
 
 window = Tk()
