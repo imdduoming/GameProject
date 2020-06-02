@@ -63,6 +63,7 @@ O_count=Label(f_sbo, text='●　　', fg='red')
 O_count.grid(column=1, row=2)
 
 
+
 # 버튼부분
 f_button = Frame(window, width='400', height='200', relief='solid', bd='1')
 f_button.place(x=400, y=600)
