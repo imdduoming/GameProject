@@ -106,6 +106,7 @@ class SBO(Frame):  # 미완
     def sbo_update(self):
         pass
 
+
 class ScoreBoard(Frame):
     def __init__(self):
         Frame.__init__(self, width='200', height='150', relief='solid', bd='1')
@@ -177,9 +178,26 @@ class BallButton(Frame):
 
 class attackNum(Frame):
     def __init__(self):
-        Frame.__init__(self)
-        pass
-        # 구조를 먼저 짜야함 3x3 grid로 짜는게 좋을듯?
+        Frame.__init__(self, width='300', height='300', relief='solid', bd='1')
+        self.lab1 = Label(self)
+        self.box11 = Label(self,width='9', height='4', relief='solid')
+        self.box12 = Label(self, width='9', height='4', relief='solid')
+        self.box13 = Label(self, width='9', height='4', relief='solid')
+        self.lab2 = Label(self)
+        self.box21 = Label(self, width='9', height='4', relief='solid')
+        self.box22 = Label(self, width='9', height='4', relief='solid')
+        self.box23 = Label(self, width='9', height='4', relief='solid')
+        self.lab3 = Label(self)
+
+        self.lab1.grid(column='0', row='0', columnspan='3')
+        self.box11.grid(column='0', row='1', padx='2')
+        self.box12.grid(column='1', row='1', padx='2')
+        self.box13.grid(column='2', row='1', padx='2')
+        self.lab2.grid(column='0', row='2', columnspan='3')
+        self.box21.grid(column='0', row='3', padx='2')
+        self.box22.grid(column='1', row='3', padx='2')
+        self.box23.grid(column='2', row='3', padx='2')
+        self.lab3.grid(column='0', row='4', columnspan='3')
 
 
 class Game(Frame):
@@ -194,6 +212,7 @@ class ResultPage(Frame):
     def __init__(self, master):
         Frame.__init__(self, master)
         pass
+
 
 class pAttack:
     # bfr = BaseFrame()
@@ -219,7 +238,8 @@ class aInning:
             pAttack
         pass
 
-# ------전역함수--------
+
+# ------함수--------
 
 def randpart(n):  # 합(n)을 받았을 때, 임의의 3개 한자리 수로 분할하는 함수
     from random import randint
@@ -279,11 +299,6 @@ def decision(playhit, compitch):
         return 'triplehit'
     elif bothcorrect == 3 and numcorrect == 3:
         return 'homerun'
-
-
-'''
-
-'''
 
 
 def defense_num(n=1):  # 투수의 수와 타자의 수 오차 구하기(선수비일때)
