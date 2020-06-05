@@ -3,7 +3,7 @@ import random as rd
 import time
 
 
-# ------tk용 클래스 선언--------
+# ------tk, 프레임 클래스--------
 
 
 class GameMain(Tk):
@@ -54,7 +54,10 @@ class NewGame(Frame):
         self.lab2.config(text="당신은 {}입니다.".format(player))
         self.master.update()
         time.sleep(2)
-        master.switch_frame(Game)
+        if player == '선공':
+            master.switch_frame(pAttack)
+        elif player == '후공':
+            quit()
 
 
 class BaseFrame(Frame):
@@ -80,6 +83,132 @@ class BaseFrame(Frame):
             self.c_base.create_polygon(56, 73, 20, 109, 56, 145, 92, 109, fill='white', outline='black')
 
 
+class ResultPage(Frame):
+    def __init__(self, master):
+        Frame.__init__(self, master)
+        pass
+
+
+class pAttack(Frame):
+    def __init__(self, master):
+        Frame.__init__(self, master)
+        self.bfr = BaseFrame()
+        self.bfr.place(x=40, y=40)
+        self.sbo = SBO()
+        self.sbo.place(x=1000, y=700)
+        self.but = BallButton()
+        self.but.place(x=400, y=600)
+        self.atn = attackNum()
+        self.atn.place(x=450, y=250)
+        self.scr = ScoreBoard()
+        self.scr.place(x=950, y=40)
+        strikeNum = 0
+        ballNum = 0
+        outNum = 0
+        while outNum < 3:
+            while (outNum == 0 and strikeNum < 3):
+                defen = 0
+                numsel = 0
+                player_hit = []
+                num_list = list(range(1, 10))
+                com_pitch = rd.sample(num_list, 3)  # 수비자(컴퓨터)의 투구(리스트)
+                coms = sum(com_pitch)
+                self.atn.pitch_update(coms)  # 컴퓨터가 던진 수 합
+                self.atn.lab2.config(text='당신이 고른 수는')
+                self.atn.master.update()
+                IntVar
+                #
+                # user_decision = decision(player_hit, com_pitch)
+                # if (((
+                #              user_decision != 'homerun' and user_decision != 'foul') and user_decision != 'strike') and user_decision != 'ball'):  # 홈런,파울,스트라이크,볼이 아닐때만 수비함
+                #     pass
+                # strikeNum, ballNum, outNum = attackscore(user_decision, defen, strikeNum, ballNum,
+                #                                          outNum)  # out횟수와 각 1,2,3,4루의 상황 결정
+
+        #     outNum_t += 1
+        # print('당신은 총 ', outNum_t, 'out 되었습니다.')
+
+    # user_attackend(inning_score, user_score)
+    #
+    # # 공수교대 되어 사용자가 1회안에서 선공격 후 수비하는 차례
+    # print('공수교대되어 지금은 ', i, '회 말입니다.')
+    # wait()
+    # print('당신은 수비를 할 차례입니다.')
+    # outNum_t = 0
+    # inning_score = 0
+    # while (outNum_t < 3):
+    #
+    #     strikeNum = 0
+    #     outNum = 0
+    #     ballNum = 0
+    #     while (outNum == 0 and strikeNum < 3):
+    #         player_pitch = map(int, input("원하시는 세자리 수를 입력하세요 (공백으로 구분): ").split())
+    #         player_pitch_list = list(player_pitch)  # player 투수의 세자리수 입력
+    #         player_pitch_sum = sum(player_pitch_list)
+    #         defen = 0
+    #         print("타자가 수를 선택하고 있습니다.")
+    #         wait()
+    #         time.sleep(1)
+    #         print("타자가 수를 선택하였습니다.")
+    #         c_hit = com_hit(player_pitch_list)  # 투수의 합을 타자가 분할해서 숫자를 예측함
+    #         final_decision = decision(c_hit, player_pitch_list)  # 투수와 타자 자리 비교 결정
+    #         print(final_decision)
+    #         if (((
+    #                      final_decision != 'homerun' and final_decision != 'foul') and final_decision != 'strike') and final_decision != 'ball'):  # 홈런과 파울이 아닐때만 수비함
+    #             defen = user_defense(defen)
+    #
+    #             if defen == 1:  # 수비 성공하면
+    #                 outNum += 1  # outNum++1
+    #                 print('1 out 입니다.')
+    #             elif (defen == 0):
+    #                 strikeNum, ballNum, outNum = attackscore(final_decision, defen, strikeNum, ballNum, outNum)
+    #
+    #         elif (final_decision == 'homerun'):  # 홈런이면
+    #             strikeNum, ballNum, outNum = attackscore(final_decision, defen, strikeNum, ballNum, outNum)
+    #         elif (final_decision == 'strike'):
+    #             strikeNum += 1
+    #             print(strikeNum, 'strike 입니다')
+    #         elif (final_decision == 'foul'):
+    #             if (strikeNum != 2):
+    #                 strikeNum += 1
+    #                 print(strikeNum, 'strike 입니다')
+    #         elif (final_decision == 'ball'):
+    #             if final_decision == 'ball':
+    #                 ballNum += 1
+    #                 if ballNum == 4:  # 볼넷일 때
+    #                     ballNum = 0
+    #                     getonbase_ball(1)
+    #                     print('볼넷입니다. 주자가 출루합니다.')
+    #                 else:
+    #                     print(ballNum, 'ball 입니다.')
+    #
+    #     outNum_t += 1
+    #     print('상대 팀은 총 ', outNum_t, 'out 되었습니다.')
+    #     print()
+    #
+    # com_attackend(inning_score, com_score)
+    #
+    # game_end(i, user_score, com_score)
+
+
+class cAttack:
+    pass
+
+
+class aInning:
+    def __init__(self):
+        if player == '선공':
+            pAttack
+            cAttack
+        elif player == '후공':
+            cAttack
+            pAttack
+        pass
+
+
+#  ---------화면구성요소---------
+
+
 class SBO(Frame):  # 미완
     def __init__(self):
         Frame.__init__(self, width='150', height='100', relief='solid', bd='1')
@@ -103,7 +232,7 @@ class SBO(Frame):  # 미완
         O_count = Label(self, text='●　　', fg='red')
         O_count.grid(column=1, row=2)
 
-    def sbo_update(self):
+    def sbo_update(self, s, b, o):
         pass
 
 
@@ -140,25 +269,25 @@ class BallButton(Frame):
         self.rowconfigure(1, weight=1)
         for i in range(5):
             self.columnconfigure(i, weight=1)
-        self.button0 = Button(self, width='9', height='4')
+        self.button0 = Button(self, width='9', height='4', text='0')
         self.button0.config(command=lambda: [self.number_select(0), self.button0.config(state='disabled')])
-        self.button1 = Button(self, width='9', height='4')
+        self.button1 = Button(self, width='9', height='4', text='1')
         self.button1.config(command=lambda: [self.number_select(1), self.button1.config(state='disabled')])
-        self.button2 = Button(self, width='9', height='4')
+        self.button2 = Button(self, width='9', height='4', text='2')
         self.button2.config(command=lambda: [self.number_select(2), self.button2.config(state='disabled')])
-        self.button3 = Button(self, width='9', height='4')
+        self.button3 = Button(self, width='9', height='4', text='3')
         self.button3.config(command=lambda: [self.number_select(3), self.button3.config(state='disabled')])
-        self.button4 = Button(self, width='9', height='4')
+        self.button4 = Button(self, width='9', height='4', text='4')
         self.button4.config(command=lambda: [self.number_select(4), self.button4.config(state='disabled')])
-        self.button5 = Button(self, width='9', height='4')
+        self.button5 = Button(self, width='9', height='4', text='5')
         self.button5.config(command=lambda: [self.number_select(5), self.button5.config(state='disabled')])
-        self.button6 = Button(self, width='9', height='4')
+        self.button6 = Button(self, width='9', height='4', text='6')
         self.button6.config(command=lambda: [self.number_select(6), self.button6.config(state='disabled')])
-        self.button7 = Button(self, width='9', height='4')
+        self.button7 = Button(self, width='9', height='4', text='7')
         self.button7.config(command=lambda: [self.number_select(7), self.button7.config(state='disabled')])
-        self.button8 = Button(self, width='9', height='4')
+        self.button8 = Button(self, width='9', height='4', text='8')
         self.button8.config(command=lambda: [self.number_select(8), self.button8.config(state='disabled')])
-        self.button9 = Button(self, width='9', height='4')
+        self.button9 = Button(self, width='9', height='4', text='9')
         self.button9.config(command=lambda: [self.number_select(9), self.button9.config(state='disabled')])
         self.button0.grid(column='0', row='0')
         self.button1.grid(column='1', row='0')
@@ -180,7 +309,7 @@ class attackNum(Frame):
     def __init__(self):
         Frame.__init__(self, width='300', height='300', relief='solid', bd='1')
         self.lab1 = Label(self)
-        self.box11 = Label(self,width='9', height='4', relief='solid')
+        self.box11 = Label(self, width='9', height='4', relief='solid')
         self.box12 = Label(self, width='9', height='4', relief='solid')
         self.box13 = Label(self, width='9', height='4', relief='solid')
         self.lab2 = Label(self)
@@ -199,44 +328,12 @@ class attackNum(Frame):
         self.box23.grid(column='2', row='3', padx='2')
         self.lab3.grid(column='0', row='4', columnspan='3')
 
-
-class Game(Frame):
-    def __init__(self, master):
-        Frame.__init__(self, master)
-        for i in range(gameNum):
-            aInning
-        pass
-
-
-class ResultPage(Frame):
-    def __init__(self, master):
-        Frame.__init__(self, master)
-        pass
-
-
-class pAttack:
-    # bfr = BaseFrame()
-    # bfr.place(x=40, y=40)
-    # sbo = SBO()
-    # sbo.place(x=1000, y=700)
-    # but = BallButton()
-    # but.place(x=400, y=600)
-    pass
-
-
-class cAttack:
-    pass
-
-
-class aInning:
-    def __init__(self):
-        if player == '선공':
-            pAttack
-            cAttack
-        elif player == '후공':
-            cAttack
-            pAttack
-        pass
+    def pitch_update(self, coms):
+        self.lab1.config(text='상대방이 고른 숫자 3개의 합은')
+        tfactor = str(int(coms / 10))
+        ofactor = str(coms % 10)
+        self.box12.config(text=tfactor)
+        self.box13.config(text=ofactor)
 
 
 # ------함수--------
@@ -506,6 +603,7 @@ if __name__ == '__main__':  # 이 py 파일이 실행되었을 때만 실행
     playerOp = ['선공', '후공']
     player = None
     playerName = ''
+    half_game = '초'
     gameNum = 0
     game = GameMain()
     game.mainloop()
