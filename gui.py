@@ -70,7 +70,39 @@ class NewGame(Frame):
 class ResultPage(Frame):
     def __init__(self, master):
         Frame.__init__(self, master)
-        pass
+        self.imsilabel = Label(text='점수표 오류로 인해 다시 쓰는중..')
+        self.next_button = Button(self)
+        self.next_button.pack()
+        if inning_num == gameNum and half_game == '말':
+            self.next_button.config(text="종료")
+        else:
+            self.next_button.config(text="진행")
+
+    # noinspection PyMethodMayBeStatic
+    def progress(self, master):
+        global half_game, inning_num
+        if half_game == '말':
+            if inning_num == gameNum:
+                if user_score > com_score:
+                    messagebox.showinfo("승리", "당신의 승리입니다!")
+                elif user_score == com_score:
+                    messagebox.showinfo("무승부", "무승부입니다.")
+                else:
+                    messagebox.showerror("패배", "당신의 패배입니다.")
+                master.switch_frame(GameMain)
+            else:
+                inning_num += 1
+                half_game = '초'
+                if player == '선공':
+                    master.switch_frame(pAttack)
+                elif player == '후공':
+                    master.switch_frame(cAttack)
+        elif half_game == '초':
+            half_game = '말'
+            if player == '선공':
+                master.switch_frame(pAttack)
+            elif player == '후공':
+                master.switch_frame(cAttack)
 
 
 class pAttack(Frame):
@@ -464,6 +496,35 @@ class attackNum(Frame):
         ofactor = str(coms % 10)
         self.box12.config(text=tfactor)
         self.box13.config(text=ofactor)
+
+
+class TotalScore(Frame):
+    def __init__(self):
+        Frame.__init__(self, width='800', height='600', relief='solid', bd='1')
+        self.box0l = []
+        self.tname1 = Label(self, width='5', height='4')
+        self.tname2 = Label(self, width='5', height='4')
+        self.tname1.grid(column=0, row=1)
+        self.tname2.grid(column=0, row=2)
+        for i in range(9):
+            self.box0l.append(Label(self, width='7', height='2', relief='solid', text=str(i + 1)))
+            self.box0l[i].grid(column=i + 1, row=0)
+        self.box0l.append(Label(self, width='7', height='2', relief='solid', text='총점'))
+        self.box0l[9].grid(column=10, row=0)
+        self.box1l = []
+        for i in range(10):
+            self.box1l.append(Label(self, width='7', height='4', relief='solid'))
+            self.box1l[i].grid(column=i + 1, row=1)
+        self.box2l = []
+        for i in range(10):
+            self.box2l.append(Label(self, width='7', height='4', relief='solid'))
+            self.box2l[i].grid(column=i + 1, row=2)
+        if player == '선공':
+            self.tname1.config(text=playerName)
+            self.tname2.config(text='COM')
+        elif player == '후공':
+            self.tname2.config(text=playerName)
+            self.tname1.config(text='COM')
 
 
 # ------함수--------
