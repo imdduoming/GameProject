@@ -43,6 +43,9 @@ def com_hit(player_pitch_list):#타자가 투수가 공던지면 배트 휘두�
     cpitch = randpart(player_pitch_sum)
     return cpitch
 
+
+
+
 def decision(playhit, compitch):
     bothcorrect = 0
     numcorrect = 0
@@ -77,23 +80,27 @@ def defense_num(n=1):  # 투수의 수와 타자의 수 오차 구하기(선수�
     return hit_margin
 
 
-def user_defense(defen):  # 수비수가 타자의 오차 예측하기
-    defen=0
+def user_defense(defen=0):  # 수비수가 타자의 오차 예측하기
+
     defense_predict = int(input("타자의 오차값을 예측하세요 : "))
     hit_margin = defense_num(1)  # 타자의 오차
     defense_margin = abs(defense_predict - hit_margin)  # 수비수의 오차
     if defense_margin <= 50:
         defen=1
         print("아웃! 수비를 성공하였습니다.")
+        return defen
 
     elif defense_margin <= 100:
         print('수비를 다시 한번 시도해주세요!')
         print()
-        user_defense(1)
-    else:
-        print("출루! 수비를 실패하였습니다.")
+        return user_defense(0)
 
-    return defen
+    else:
+        defen = 0
+        print("출루! 수비를 실패하였습니다.")
+        return defen
+
+
 
 
 def playerhit(pitch):  # 원소 3개의 리스트를 받으면 합을 표출하고, 플레이어의 반응을 얻고 플레이어가 입력한 리스트 구하기
@@ -101,7 +108,7 @@ def playerhit(pitch):  # 원소 3개의 리스트를 받으면 합을 표출하�
     for i in pitch:
         com_sum += i
     print('투수가 던진 공의 합은 {}입니다.'.format(com_sum))
-    a, b, c = input('합이 {}인 9 이하의 서로 다른 자연수 세 개를 고르시오(쉼표로 구분): '.format(com_sum)).split(',')
+    a, b, c = input('합이 {}인 9 이하의 서로 다른 자연수 세 개를 고르시오(공백으로 구분): '.format(com_sum)).split()
     hit = [a, b, c]
     play_hit = [int(i) for i in hit]
     return play_hit
@@ -124,16 +131,20 @@ def com_defense(defen=0): #수비수(컴퓨터)가 타자의 오차 예측하기
         if defense_margin <= 50:
             defen=1#수비성공
             print("아웃! 수비수가 수비를 성공하였습니다.")
+            return defen
 
 
         elif defense_margin <= 100:
             print('수비수가 다시 한 번 수비를 시도합니다!')
-            com_defense(1)
+            print()
+            return com_defense(0)
 
         else:
             print("출루! 수비수가 수비를 실패하였습니다.")
+            defen=0
+            return defen
 
-        return defen
+
 
 def wait():
     print('잠시만 기다려 주세요.')
@@ -161,15 +172,34 @@ def getonbase(n=1):
     inning_score += base[4]  # 홈에 도착한 인원들을 점수로 합산
     base[4] = 0  # 홈 초기화
 
-def attackscore(user_decision,defen,strikeNum,outNum):#타자의 결정에따라 상황정해짐
+def getonbase_ball(n=1):
+    global base
+    if base[1] == 1:
+        if base[2] == 1:
+            getonbase(1)
+        elif base[2] == 0:
+            base[2] == 1
+    elif base[1] == 0:
+        base[1] == 1
+
+
+
+def attackscore(user_decision, defen, strikeNum, ballNum, outNum):   #타자의 결정에따라 상황 정해짐
     if user_decision == 'strike':
         strikeNum += 1
         print(strikeNum,'strike 입니다')
     elif user_decision == 'foul':
-        if(strikeNum!=2):
-            strikeNum+=1
+        if strikeNum != 2:
+            strikeNum += 1
             print(strikeNum,'strike 입니다')
-
+    elif user_decision == 'ball':
+        ballNum += 1
+        if ballNum == 4:   #볼넷일 때
+            ballNum = 0
+            getonbase_ball(1)
+            print('볼넷입니다. 주자가 출루합니다.')
+        else:
+            print(ballNum, 'ball 입니다.')
     elif user_decision == 'singlehit':
         if (defen==0):
             getonbase(1)
@@ -177,7 +207,6 @@ def attackscore(user_decision,defen,strikeNum,outNum):#타자의 결정에따라
         else:
             outNum+=1
             print('1 out 되었습니다.')
-
     elif user_decision == 'doublehit':
         if (defen==0):
             getonbase(2)
@@ -199,12 +228,40 @@ def attackscore(user_decision,defen,strikeNum,outNum):#타자의 결정에따라
     if(strikeNum==3):
         outNum+=1
         print(outNum,'out 되었습니다.')
-    #if(ballNum==4):
-        #getonbase(1)
-    return strikeNum,outNum
+    return strikeNum,ballNum,outNum
 
+def user_attackend(inning_score,my_score):#사용자의 공격이 끝나고 점수계산
+    blank_line()
+    print('3 out')
 
+    blank()
+    print('당신이 이번 공격에서 얻은 점수는 ', inning_score, '입니다')
+    print('현재 당신의 총 점수를 알려드리겠습니다.')
+    wait()
+    my_score=my_score+inning_score
+    print('현재 당신의 총 점수는 ',my_score,'입니다.')
+    return my_score
 
+def com_attackend(inning_score,my_score):#컴퓨터의 공격이 끝나고 점수계산
+    print('3 out')
+    blank()
+
+    blank_line()
+    print('상대 팀이 이번 공격에서 얻은 점수는 ', inning_score, '입니다')
+    print('합산된 상대의 총 점수를 알려드리겠습니다.')
+    wait()
+    my_score = my_score + inning_score
+
+    print('현재 상대 팀의 총 점수는 ', my_score, '입니다.')
+    return my_score
+
+def game_end(i,user_score,com_score):#한회가 끝나고 점수계산하는 함수
+    print('현재 score을 계산 중입니다.')
+    wait()
+    print('현재 score는 ', user_score, ':', com_score, '입니다.')
+    print(i, '회가 모두 끝났습니다.')
+    print('수고하셨습니다.')
+    blank()
 
 
 print()
@@ -241,35 +298,29 @@ while(i<=gameNum):
         while(outNum_t<3):
 
             strikeNum=0#strike횟수
-
+            ballNum=0
             outNum=0
             while(outNum==0 and strikeNum<3):
                 print('투수가 공 3개를 결정하는 중입니다.')
                 wait()
 
-                defen = 0#수비실패가 default
+
+                defen=0
                 num_list = list(range(1, 10))
                 com_pitch = rd.sample(num_list, 3)  # 수비자(컴퓨터)의 투구(리스트)
                 player_hit = playerhit(com_pitch)  # 수비수의 합으로 공격 타자가 숫자고르기
                 user_decision=decision(player_hit, com_pitch)
                 print(user_decision)
-                print()
-                if((user_decision!='homerun' and user_decision!='foul')and user_decision!='strike'):#홈런과 파울이 아닐때만 수비함
+
+                if (((user_decision != 'homerun' and user_decision != 'foul')and user_decision!='strike')and user_decision!='ball'):#홈런,파울,스트라이크,볼이 아닐때만 수비함
                     defen=com_defense(defen)
-                strikeNum,outNum=attackscore(user_decision,defen,strikeNum,outNum)#out횟수와 각 1,2,3,4루의 상황 결정
+
+                strikeNum,ballNum,outNum=attackscore(user_decision,defen,strikeNum,ballNum,outNum)#out횟수와 각 1,2,3,4루의 상황 결정
 
             outNum_t+=1
             print('당신은 총 ',outNum_t,'out 되었습니다.')
 
-        blank_line()
-        print('3 out')
-        print('당신은 3 out이 되었으므로 공수교대를 하겠습니다')
-        blank()
-        print('당신이 이번 공격에서 얻은 점수는 ', inning_score, '입니다')
-        print('현재 당신의 총 점수를 알려드리겠습니다.')
-        wait()
-        user_score=user_score+inning_score
-        print('현재 당신의 총 점수는 ',user_score,'입니다.')
+        user_score=user_attackend(inning_score,user_score)
 
         #공수교대 되어 사용자가 1회안에서 선공격 후 수비하는 차례
         print('공수교대되어 지금은 ',i,'회 말입니다.')
@@ -288,6 +339,7 @@ while(i<=gameNum):
                 player_pitch_list = list(player_pitch)  # player 투수의 세자리수 입력
                 player_pitch_sum = sum(player_pitch_list)
                 defen=0
+                defen_re=0
                 print("타자가 수를 선택하고 있습니다.")
                 wait()
                 time.sleep(1)
@@ -296,15 +348,16 @@ while(i<=gameNum):
                 final_decision = decision(c_hit, player_pitch_list)  # 투수와 타자 자리 비교 결정
                 print(final_decision)
                 if (((final_decision != 'homerun' and final_decision != 'foul')and final_decision!='strike')and final_decision!='ball'): # 홈런과 파울이 아닐때만 수비함
-                    defen=user_defense(defen)
-                    if defen==1:#수비 성공하면
+                    defen_re=user_defense(defen)
+                  
+                    if defen_re==1:#수비 성공하면
                         outNum+=1#outNum++1
                         print('1 out 입니다.')
-                    elif (defen==0):
-                        strikeNum, outNum = attackscore(final_decision, defen, strikeNum, outNum)
+                    elif (defen_re==0):
+                        strikeNum,ballNum, outNum = attackscore(final_decision, defen, strikeNum,ballNum, outNum)
 
                 elif (final_decision == 'homerun'):#홈런이면
-                    strikeNum, outNum = attackscore(final_decision, defen, strikeNum, outNum)
+                    strikeNum, ballNum,outNum = attackscore(final_decision, defen, strikeNum,ballNum, outNum)
                 elif (final_decision == 'strike'):
                     strikeNum += 1
                     print(strikeNum, 'strike 입니다')
@@ -312,33 +365,24 @@ while(i<=gameNum):
                     if (strikeNum != 2):
                         strikeNum += 1
                         print(strikeNum, 'strike 입니다')
-                elif (final_decision=='ball'):
-                    ballNum+=1
+                elif (final_decision =='ball'):
+                    if final_decision == 'ball':
+                        ballNum += 1
+                        if ballNum == 4:  # 볼넷일 때
+                            ballNum = 0
+                            getonbase_ball(1)
+                            print('볼넷입니다. 주자가 출루합니다.')
+                        else:
+                            print(ballNum, 'ball 입니다.')
 
             outNum_t += 1
             print('상대 팀은 총 ', outNum_t, 'out 되었습니다.')
             print()
 
 
-        print('3 out')
-        blank()
-        print('상대가 3 out이 되었으므로 ',i,'회가 끝났습니다.')
-        blank_line()
-        print('상대 팀이 이번 공격에서 얻은 점수는 ', inning_score, '입니다')
-        print('합산된 상대의 총 점수를 알려드리겠습니다.')
-        wait()
-        com_score = com_score + inning_score
-        print('현재 상대 팀의 총 점수는 ', com_score, '입니다.')
+        com_score=com_attackend(inning_score,com_score)
 
-        print('현재 score을 계산 중입니다.')
-        wait()
-        print('현재 score는 ',user_score,':',com_score,'입니다.')
-        print(i,'회가 모두 끝났습니다.')
-        print('수고하셨습니다.')
-        blank()
-        print('다음 회가 준비 될 때까지 잠시만 기다려주세요')
-        time.sleep(1)
-        print()
+
 
     elif(player=='후공'):
         print('     Welcome     ')
@@ -360,7 +404,7 @@ while(i<=gameNum):
             ballNum=0
             # ballNum=0
             while (outNum == 0 and strikeNum < 3):
-                defen=0
+
 
                 player_pitch = map(int, input("원하시는 세자리 수를 입력하세요(공백으로 구분): ").split())
                 player_pitch_list = list(player_pitch)  # player 투수의 세자리수 입력
@@ -369,44 +413,48 @@ while(i<=gameNum):
                 wait()
                 time.sleep(1)
                 print("타자가 수를 선택하였습니다.")
-
+                defen=0
+                defen_re=0
                 c_hit = com_hit(player_pitch_list)  # 투수의 합을 타자가 분할해서 숫자를 예측함
                 final_decision = decision(c_hit, player_pitch_list)  # 투수와 타자 자리 비교 결정
                 print(final_decision)
 
                 if (((final_decision != 'homerun' and final_decision != 'foul')and final_decision!='strike')and final_decision!='ball'):  # 홈런과 파울이 아닐때만 수비함
-                    defen=user_defense(defen)
-                    if defen==1:
+
+                    defen_re=user_defense(defen)
+
+                    if defen_re==1:
                         outNum+=1
                         print('1 out 입니다.')
-                    elif defen==0:
-                        strikeNum, outNum = attackscore(final_decision, defen, strikeNum, outNum)
+                    elif defen_re==0:
+                        strikeNum, ballNum,outNum = attackscore(final_decision, defen, strikeNum,ballNum, outNum)
                 elif (final_decision=='homerun'):
-                    strikeNum, outNum = attackscore(final_decision, defen, strikeNum, outNum)
+                    strikeNum, ballNum,outNum = attackscore(final_decision, defen, strikeNum,ballNum, outNum)
                 elif (final_decision=='strike'):
                     strikeNum+=1
                     print(strikeNum, 'strike 입니다')
-                elif(final_decision=='foul'):
+                elif (final_decision=='foul'):
                     if (strikeNum != 2):
                         strikeNum += 1
                         print(strikeNum, 'strike 입니다')
                 elif (final_decision=='ball'):
-                    ballNum+=1
+                    if final_decision == 'ball':
+                        ballNum += 1
+                        if ballNum == 4:  # 볼넷일 때
+                            ballNum = 0
+                            getonbase_ball(1)
+                            print('볼넷입니다. 주자가 출루합니다.')
+                        else:
+                            print(ballNum, 'ball 입니다.')
+
+
 
 
             outNum_t += 1
             print('상대 팀은 총 ', outNum_t, 'out 되었습니다.')
             print()
 
-        print('3 out')
-        print('상대가 3 out이 되었으므로 ', i, '회 초가 끝났습니다.')
-        blank()
-        print('상대 팀이 이번 공격에서 얻은 점수는 ', inning_score, '입니다')
-
-        print('합산된 상대의 총 점수를 알려드리겠습니다.')
-        wait()
-        com_score = com_score + inning_score
-        print('현재 상대 팀의 총 점수는 ', com_score, '입니다.')
+        com_score=com_attackend(inning_score,com_score)
 
 
         # 공수교대 되어 사용자가 1회안에서 공격하는차례
@@ -420,7 +468,7 @@ while(i<=gameNum):
         while (outNum_t < 3):
 
             strikeNum = 0  # strike횟수
-
+            ballNum=0
             outNum = 0
             while (outNum == 0 and strikeNum < 3):
                 print('투수가 공 3개를 결정하는 중입니다.')
@@ -432,33 +480,41 @@ while(i<=gameNum):
                 player_hit = playerhit(com_pitch)  # 수비수의 합으로 공격 타자가 숫자고르기
                 user_decision = decision(player_hit, com_pitch)
                 print(user_decision)
-                if (user_decision != 'homerun' and user_decision != 'foul'):  # 홈런과 파울이 아닐때만 수비함
+                if (((user_decision!= 'homerun' and user_decision != 'foul')and user_decision!='strike')and user_decision!='ball'):#홈런,파울,스트라이크,볼이 아닐때만 수비함
                     defen=com_defense(defen)
-                strikeNum, outNum = attackscore(user_decision, defen, strikeNum, outNum)  # out횟수와 각 1,2,3,4루의 상황 결정
+
+                strikeNum,ballNum,outNum=attackscore(user_decision,defen,strikeNum,ballNum,outNum)#out횟수와 각 1,2,3,4루의 상황 결정
+
 
             outNum_t += 1
             print('당신은 총 ', outNum_t, 'out 되었습니다.')
             print()
 
-        print('3 out')
-        print('당신이 이번 공격에서 얻은 점수는 ', inning_score, '입니다')
-        print('현재 당신의 총 점수를 알려드리겠습니다.')
-        wait()
-        user_score = user_score + inning_score
-        print('현재 당신의 총 점수는 ', user_score, '입니다.')
+        user_score=user_attackend(inning_score,user_score)
 
-        print('현재 score을 계산 중입니다.')
-        wait()
-        print('현재 score는 ', user_score, ':', com_score, '입니다.')
-        print(i, '회가 모두 끝났습니다.')
-        print('수고하셨습니다.')
-        blank()
-        print('다음 회가 준비 될 때까지 잠시만 기다려주세요')
-        time.sleep(1)
-        print()
+    game_end(i,user_score,com_score)
 
     i+=1
 
+print(gameNum,'회의 게임이 모두 종료되었습니다')
+print()
+print('모든 점수가 합산되는 중입니다')
+wait()
+print('최종 점수는',user_score,':',com_score,'입니다')
+if(user_score>com_score):
+    print()
+    print('     Congratulations!    ')
+    print()
+    print('You Win!')
+elif (user_score==com_score):
+    print()
+    print('     DRAW!     ')
+    print()
+else:
+    print()
+    print('     LOSE!     ')
+    print()
+    print('다음에 또 도전해주세요! ')
 
 
 
