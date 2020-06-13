@@ -2,8 +2,10 @@ from tkinter import *
 import random as rd
 import time
 from tkinter import messagebox
+# from PIL import Image as pim
+# from PIL import ImageTk as pimtk
 
-
+# 화면 요소 프레임을 하위로 만들려면...
 # ------tk, 프레임 클래스--------
 
 
@@ -13,41 +15,45 @@ class GameMain(Tk):
         self.geometry("1200x900")
         self.title("야구 게임")
         self.resizable(False, False)
-        self._frame = None
+        # self.pack_propagate(0)
+        self.frame = None
         self.switch_frame(StartPage)
 
     def switch_frame(self, frame_class):
         new_frame = frame_class(self)
-        if self._frame is not None:
-            self._frame.destroy()
-        self._frame = new_frame
-        self._frame.pack()
+        if self.frame is not None:
+            self.frame.destroy()
+        self.frame = new_frame
+        self.frame.pack()
 
 
-class StartPage(Frame):  # 시작 페이지, 버튼 위치 등은 사후 조정
-    def __init__(self, master):  # master 는 부모를 의미한다. 즉, Tk를 의미
-        Frame.__init__(self, master)
-        Button(self, text="게임 시작", command=lambda: master.switch_frame(NewGame)).pack(anchor='center')  # ).pack()
-        Button(self, text="튜토리얼").pack(anchor='center')  # , command=lambda: master.switch_frame(PageTwo)).pack()
-        Button(self, text="게임종료", command=lambda: quit()).pack(anchor='center')
+class StartPage(Frame):
+    def __init__(self, master):
+        Frame.__init__(self, master, bg='#509134', width='1200', height='900')
+        self.pack_propagate(0)
+        self.but1 = Button(self, text="게임 시작", command=lambda: master.switch_frame(NewGame), width='20', height='5')
+        self.but1.pack(pady=100)
+        self.but2 = Button(self, text="튜토리얼", width='20', height='5')#, command=lambda: master.switch_frame(ResultPage))
+        self.but2.pack(pady=100)
+        self.but3 = Button(self, text="게임종료", command=quit, width='20', height='5')
+        self.but3.pack(pady=100)
 
 
 class NewGame(Frame):
     def __init__(self, master):
-        Frame.__init__(self, master)
-        Label(self, text='당신의 팀 이름을 입력해주세요: ').grid(column='0', row='0')
+        Frame.__init__(self, master, width='1200', height='900')
+        self.lab1 = Label(self, text='당신의 팀 이름을 입력해주세요: ')
+        self.lab1.grid(column='0', row='0')
         self.ent1 = Entry(self)
         self.ent1.grid(column='1', row='0')
-        Label(self, text='진행할 게임 횟수를 입력해주세요(1~9): ').grid(column='0', row='1')
+        self.lab2 = Label(self, text='진행할 게임 횟수를 입력해주세요(1~9): ')
+        self.lab2.grid(column='0', row='1')
         self.ent2 = Entry(self)
         self.ent2.grid(column='1', row='1')
-        Button(self, text='게임 시작', command=lambda: self.game_start()).grid(column='1', row='2')
-        self.lab1 = Label(self, text='')
-        self.lab1.grid(column='0', row='3', columnspan='2')
-        self.lab2 = Label(self, text='')
-        self.lab2.grid(column='0', row='4', columnspan='2')
+        self.but1 = Button(self, text='게임 시작', command=lambda: self.game_start(master))
+        self.but1.grid(column='1', row='2')
 
-    def game_start(self):
+    def game_start(self, master):
         if 1 <= int(self.ent2.get()) <= 9:
             global playerOp, player, playerName, gameNum, inning_num
             player = rd.choice(playerOp)
@@ -56,30 +62,33 @@ class NewGame(Frame):
             if player == '선공':
                 inning_num += 1
                 messagebox.showinfo("선공", "당신은 선공입니다.")
-                self.destroy()
-                self.master.switch_frame(pAttack)
+                # self.destroy()
+                master.switch_frame(PlayerAttack)
             elif player == '후공':
                 inning_num += 1
                 messagebox.showinfo("후공", "당신은 후공입니다.")
-                self.destroy()
-                self.master.switch_frame(cAttack)
+                # self.destroy()
+                master.switch_frame(ComAttack)
         else:
             messagebox.showwarning("게임 횟수", "게임 횟수를 재설정해주세요.\n (1~9) ")
 
 
 class ResultPage(Frame):
     def __init__(self, master):
-        Frame.__init__(self, master)
-        self.imsilabel = Label(text='점수표 오류로 인해 다시 쓰는중..')
-        self.next_button = Button(self)
-        self.next_button.pack()
-        if inning_num == gameNum and half_game == '말':
-            self.next_button.config(text="종료")
-        else:
-            self.next_button.config(text="진행")
+        Frame.__init__(self, master, width='1200', height='900')
+        self.blab1 = Label(self, text=''.format(), height='20')
+        self.blab1.pack()
+        self.tot = TotalScore(self)
+        self.tot.pack()
+        self.blab1 = Label(self, height='10')
+        self.blab1.pack()
+        self.pg_button = Button(self, text='진행', command=self.progress, width='20', height='5')
+        if half_game == '말' and inning_num == gameNum:
+            self.pg_button.config(text='종료')
+        self.pg_button.pack()
 
     # noinspection PyMethodMayBeStatic
-    def progress(self, master):
+    def progress(self):
         global half_game, inning_num
         if half_game == '말':
             if inning_num == gameNum:
@@ -89,35 +98,40 @@ class ResultPage(Frame):
                     messagebox.showinfo("무승부", "무승부입니다.")
                 else:
                     messagebox.showerror("패배", "당신의 패배입니다.")
-                master.switch_frame(GameMain)
+                self.master.switch_frame(GameMain)
             else:
                 inning_num += 1
                 half_game = '초'
                 if player == '선공':
-                    master.switch_frame(pAttack)
+                    self.master.switch_frame(PlayerAttack)
                 elif player == '후공':
-                    master.switch_frame(cAttack)
+                    self.master.switch_frame(ComAttack)
         elif half_game == '초':
             half_game = '말'
             if player == '선공':
-                master.switch_frame(pAttack)
+                self.master.switch_frame(PlayerAttack)
             elif player == '후공':
-                master.switch_frame(cAttack)
+                self.master.switch_frame(ComAttack)
 
 
-class pAttack(Frame):
+class PlayerAttack(Frame):
     def __init__(self, master):
-        Frame.__init__(self, master)
-        self.bfr = BaseFrame()
+        Frame.__init__(self, master, width='1200', height='900')
+        self.bfr = BaseFrame(self)
         self.bfr.place(x=40, y=40)
-        self.sbo = SBO()
+        self.sbo = SBO(self)
         self.sbo.place(x=1000, y=700)
-        self.but = BallButton()
+        self.but = BallButton(self)
         self.but.place(x=400, y=600)
-        self.atn = attackNum()
+        self.atn = attackNum(self)
         self.atn.place(x=450, y=250)
-        self.scr = ScoreBoard()
+        self.scr = ScoreBoard(self)
         self.scr.place(x=950, y=40)
+        self.start_button = Button(self, text='시작', width=10, height=5, command=self.play)
+        self.start_button.place(x=550, y=100)
+
+    def play(self):
+        self.start_button.destroy()
         strikeNum = 0
         ballNum = 0
         outNum = 0
@@ -178,22 +192,28 @@ class pAttack(Frame):
             time.sleep(1.5)
         uin_score.append(inning_score)
         messagebox.showinfo("3 OUT", "3 OUT 으로 공수교대합니다.")
-        master.switch_frame(ResultPage)
+        self.master.switch_frame(ResultPage)
 
 
-class cAttack(Frame):
+class ComAttack(Frame):
     def __init__(self, master):
-        Frame.__init__(self, master)
-        self.bfr = BaseFrame()
+        Frame.__init__(self, master, width='1200', height='900')
+        self.bfr = BaseFrame(self)
         self.bfr.place(x=40, y=40)
-        self.sbo = SBO()
+        self.sbo = SBO(self)
         self.sbo.place(x=1000, y=700)
-        self.but = BallButton()
+        self.but = BallButton(self)
         self.but.place(x=400, y=600)
-        self.atn = attackNum()
+        self.atn = attackNum(self)
         self.atn.place(x=450, y=250)
-        self.scr = ScoreBoard()
+        self.scr = ScoreBoard(self)
         self.scr.place(x=950, y=40)
+        self.start_button = Button(self, text='시작', width=10, height=5, command=self.play)
+        self.start_button.place(x=550, y=100)
+        self.d_list = []
+
+    def play(self):
+        self.start_button.destroy()
         strikeNum = 0
         ballNum = 0
         outNum = 0
@@ -208,9 +228,8 @@ class cAttack(Frame):
             self.atn.all_reset()
             self.master.update()
             time.sleep(1)
-            self.d_list = []
-            self.defen = 2
             player_pitch = []
+            defen = 2
 
             self.atn.lab1.config(text='숫자 세개를 골라주세요!')
             self.atn.master.update()
@@ -232,7 +251,7 @@ class cAttack(Frame):
 
             self.atn.lab1.config(text='내가 고른 수는')
             self.atn.lab2.config(text="상대가 숫자를 예측중입니다.")
-            master.update()
+            self.master.update()
             time.sleep(1.5)
 
             c_hit = com_hit(player_pitch)
@@ -243,20 +262,22 @@ class cAttack(Frame):
 
             if (((
                          user_decision != 'homerun' and user_decision != 'foul') and user_decision != 'strike') and user_decision != 'ball'):
-                while self.defen >= 2:
+                while defen >= 2:
                     self.player_defense()
-                    self.defen = user_defense(player_pitch, c_hit, self.d_list)
-                    if self.defen == 1:
+                    defen = user_defense(player_pitch, c_hit, self.d_list)
+                    if defen == 1:
                         messagebox.showerror("수비 성공", "수비 성공! 적을 아웃시켰습니다.")
                         outNum += 1
                         break
-                    elif self.defen == 0:
+                    elif defen == 0:
                         messagebox.showerror("수비 실패", "수비 실패! 적이 진루합니다.")
-                        strikeNum, ballNum, outNum = attack_score(user_decision, self.defen, strikeNum, ballNum,
+                        strikeNum, ballNum, outNum = attack_score(user_decision, defen, strikeNum, ballNum,
                                                                   outNum)
                         break
                     else:
                         self.atn.lab3.config(text='다시 입력해 주세요.')
+                        self.master.update()
+                        time.sleep(1.5)
             else:
                 strikeNum, ballNum, outNum = attack_score(user_decision, 0, strikeNum, ballNum,
                                                           outNum)
@@ -266,13 +287,14 @@ class cAttack(Frame):
             time.sleep(1)
         cin_score.append(inning_score)
         messagebox.showinfo("3 OUT", "3 OUT 으로 공수교대합니다.")
-        master.switch_frame(ResultPage)
+        self.master.switch_frame(ResultPage)
 
     def player_defense(self):
         self.atn.lab2.config(text="상대의 안타! 얼마나 차이날까요?")
         self.atn.lab3.config(text="오차를 예측하세요")
         self.atn.box2_reset()
         self.but.button_reset()
+        self.but.button0.config(text='0', state='normal')
         self.master.update()
 
         self.wait_variable(self.but.n)
@@ -294,8 +316,9 @@ class cAttack(Frame):
 #  ---------화면구성요소---------
 
 class BaseFrame(Frame):
-    def __init__(self):
-        Frame.__init__(self, width='200', height='200', relief='solid', bd='1')
+    def __init__(self, master):
+        Frame.__init__(self, master)
+        self.config(width='200', height='200', relief='solid', bd='1')
         self.c_base = Canvas(self, width='200', height='200')
         self.c_base.pack()
         self.base_update()
@@ -317,9 +340,10 @@ class BaseFrame(Frame):
             self.c_base.create_polygon(56, 73, 20, 109, 56, 145, 92, 109, fill='white', outline='black')
 
 
-class SBO(Frame):  # 미완
-    def __init__(self):
-        Frame.__init__(self, width='150', height='100', relief='solid', bd='1')
+class SBO(Frame):
+    def __init__(self, master):
+        Frame.__init__(self, master)
+        self.config(width='150', height='100', relief='solid', bd='1')
         self.grid_propagate(0)
         for i in range(3):
             self.rowconfigure(i, weight=1)
@@ -350,8 +374,9 @@ class SBO(Frame):  # 미완
 
 
 class ScoreBoard(Frame):
-    def __init__(self):
-        Frame.__init__(self, width='200', height='150', relief='solid', bd='1')
+    def __init__(self, master):
+        Frame.__init__(self, master)
+        self.config(width='200', height='150', relief='solid', bd='1')
         self.grid_propagate(0)
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
@@ -393,15 +418,17 @@ class ScoreBoard(Frame):
 
 
 class BallButton(Frame):
-    def __init__(self):
+    def __init__(self, master):
+        Frame.__init__(self, master)
+        self.config(width='400', height='200', relief='solid', bd='1')
         self.n = IntVar()
-        Frame.__init__(self, width='400', height='200', relief='solid', bd='1')
         self.grid_propagate(0)
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
         for i in range(5):
             self.columnconfigure(i, weight=1)
-        self.button0 = Button(self, width='9', height='4', text='')
+        self.button0 = Button(self, width='9', height='4', text='', state='disabled')
+        self.button0.config(command=lambda: [self.number_select(1), self.button1.config(state='disabled')])
         self.button1 = Button(self, width='9', height='4', text='1')
         self.button1.config(command=lambda: [self.number_select(1), self.button1.config(state='disabled')])
         self.button2 = Button(self, width='9', height='4', text='2')
@@ -435,6 +462,7 @@ class BallButton(Frame):
         self.n.set(n)
 
     def button_reset(self):
+        self.button0.config(text='', state='disabled')
         self.button1.config(state='normal')
         self.button2.config(state='normal')
         self.button3.config(state='normal')
@@ -447,8 +475,9 @@ class BallButton(Frame):
 
 
 class attackNum(Frame):
-    def __init__(self):
-        Frame.__init__(self, width='300', height='300', relief='solid', bd='1')
+    def __init__(self, master):
+        Frame.__init__(self, master)
+        self.config(width='300', height='300', relief='solid', bd='1')
         self.lab1 = Label(self)
         self.box11 = Label(self, width='9', height='4', relief='solid')
         self.box12 = Label(self, width='9', height='4', relief='solid')
@@ -499,32 +528,42 @@ class attackNum(Frame):
 
 
 class TotalScore(Frame):
-    def __init__(self):
-        Frame.__init__(self, width='800', height='600', relief='solid', bd='1')
+    def __init__(self, master):
+        Frame.__init__(self, master)
+        self.config(width='800', height='600', relief='solid', bd='1')
         self.box0l = []
-        self.tname1 = Label(self, width='5', height='4')
-        self.tname2 = Label(self, width='5', height='4')
+        self.tname1 = Label(self, width='5', height='4', relief='solid', bd='1')
+        self.tname2 = Label(self, width='5', height='4', relief='solid', bd='1')
         self.tname1.grid(column=0, row=1)
         self.tname2.grid(column=0, row=2)
         for i in range(9):
-            self.box0l.append(Label(self, width='7', height='2', relief='solid', text=str(i + 1)))
+            self.box0l.append(Label(self, width='7', height='2', relief='solid', bd='1', text=str(i + 1)))
             self.box0l[i].grid(column=i + 1, row=0)
-        self.box0l.append(Label(self, width='7', height='2', relief='solid', text='총점'))
+        self.box0l.append(Label(self, width='7', height='2', relief='solid', text='총점', bd='1'))
         self.box0l[9].grid(column=10, row=0)
         self.box1l = []
         for i in range(10):
-            self.box1l.append(Label(self, width='7', height='4', relief='solid'))
+            self.box1l.append(Label(self, width='7', height='4', relief='solid', bd='1'))
             self.box1l[i].grid(column=i + 1, row=1)
         self.box2l = []
         for i in range(10):
-            self.box2l.append(Label(self, width='7', height='4', relief='solid'))
+            self.box2l.append(Label(self, width='7', height='4', relief='solid', bd='1'))
             self.box2l[i].grid(column=i + 1, row=2)
         if player == '선공':
             self.tname1.config(text=playerName)
+            for i in range(len(uin_score)):
+                self.box1l[i+1].config(text=uin_score[i])
             self.tname2.config(text='COM')
+            for i in range(len(cin_score)):
+                self.box2l[i+1].config(text=cin_score[i])
+
         elif player == '후공':
             self.tname2.config(text=playerName)
+            for i in range(len(uin_score)):
+                self.box2l[i+1].config(text=uin_score[i])
             self.tname1.config(text='COM')
+            for i in range(len(cin_score)):
+                self.box1l[i+1].config(text=cin_score[i])
 
 
 # ------함수--------
@@ -679,6 +718,7 @@ def attack_score(user_decision, defen, strikeNum, ballNum, outNum):  # 타자의
     elif user_decision == 'ball':
         ballNum += 1
         if ballNum == 4:  # 볼넷일 때
+            strikeNum = 0
             ballNum = 0
             gon_ball()
     elif user_decision == 'singlehit':
@@ -686,22 +726,29 @@ def attack_score(user_decision, defen, strikeNum, ballNum, outNum):  # 타자의
             getonbase(1)
         else:
             outNum += 1
+        strikeNum = 0
+        ballNum = 0
     elif user_decision == 'doublehit':
         if defen == 0:
             getonbase(2)
         else:
             outNum += 1
+        strikeNum = 0
+        ballNum = 0
     elif user_decision == 'triplehit':
         if defen == 0:
             getonbase(3)
         else:
             outNum += 1
+        strikeNum = 0
+        ballNum = 0
     elif user_decision == 'homerun':
         getonbase(4)
+        strikeNum = 0
+        ballNum = 0
     if strikeNum == 3:
         outNum += 1
         strikeNum = 0
-        print(outNum, 'out 되었습니다.')
     return strikeNum, ballNum, outNum
 
 
