@@ -125,9 +125,9 @@ class ResultPage(Frame):
         elif half_game == '초':
             half_game = '말'
             if player == '선공':
-                self.master.switch_frame(PlayerAttack)
-            elif player == '후공':
                 self.master.switch_frame(ComAttack)
+            elif player == '후공':
+                self.master.switch_frame(PlayerAttack)
 
 
 class PlayerAttack(Frame):
@@ -144,11 +144,11 @@ class PlayerAttack(Frame):
         self.but = BallButton(self)
         self.but.place(x=400, y=600)
         self.atn = attackNum(self)
-        self.atn.place(x=450, y=250)
+        self.atn.place(x=500, y=250)
         self.scr = ScoreBoard(self)
         self.scr.place(x=950, y=40)
-        self.start_button = Button(self, text='시작', width=10, height=5, command=self.play)
-        self.start_button.place(x=550, y=100)
+        self.start_button = Button(self, text='시작', width="25", height="8", command=self.play, font=("맑은 고딕", 15))
+        self.start_button.place(x=475, y=300)
 
     def play(self):
         self.start_button.destroy()
@@ -232,8 +232,8 @@ class ComAttack(Frame):
         self.atn.place(x=450, y=250)
         self.scr = ScoreBoard(self)
         self.scr.place(x=950, y=40)
-        self.start_button = Button(self, text='시작', width=10, height=5, command=self.play)
-        self.start_button.place(x=550, y=100)
+        self.start_button = Button(self, text='시작', width=25, height=8, command=self.play, font=("맑은 고딕", 15))
+        self.start_button.place(x=475, y=300)
         self.d_list = []
 
     def play(self):
@@ -324,16 +324,22 @@ class ComAttack(Frame):
         self.wait_variable(self.but.n)
         self.d_list.append(self.but.n.get())
         self.atn.box21.config(text=str(self.but.n.get()))
+        self.but.button_reset()
+        self.but.button0.config(text='0', state='normal')
         self.atn.master.update()
 
         self.wait_variable(self.but.n)
         self.d_list.append(self.but.n.get())
         self.atn.box22.config(text=str(self.but.n.get()))
+        self.but.button_reset()
+        self.but.button0.config(text='0', state='normal')
         self.atn.master.update()
 
         self.wait_variable(self.but.n)
         self.d_list.append(self.but.n.get())
         self.atn.box23.config(text=str(self.but.n.get()))
+        self.but.button_reset()
+        self.but.button0.config(text='0', state='normal')
         self.atn.master.update()
 
 
@@ -358,8 +364,14 @@ class Tutorial(Frame):
         self.explain_frame = Frame(self, width=800, height=400, bg='#C5FFFF', relief='solid', bd='2')
         self.explain_frame.pack_propagate(0)
         self.explain_frame.place(x=200, y=200)
-        self.elab = Label(self.explain_frame, text='간단한 조작을 통해 게임을 배워봅시다.', bg='#C5FFFF'
-                          , font=("맑은 고딕", 12))
+        self.elab = Label(self.explain_frame, text='''
+        
+        
+        
+        
+        
+        간단한 조작을 통해 게임을 배워봅시다.''', bg='#C5FFFF',
+                          font=("맑은 고딕", 12))
         self.elab.pack(anchor='center', pady=10)
         self.ebtn = Button(self.explain_frame, text='다음', command=self.tutorial)
         self.ebtn.pack(side='bottom', anchor='center', pady=10)
@@ -367,12 +379,20 @@ class Tutorial(Frame):
 
     def tutorial(self):
         if self.tflag == 0:
-            self.elab.config(text='''이 게임은 숫자로 하는 야구 게임입니다.
+            self.elab.config(text='''
+            
+            
+            
+            이 게임은 숫자로 하는 야구 게임입니다.
             서로 상대방이 어떤 숫자 3개를 선택했는지 예상하면서 공격과 수비를 합니다.
             상대방의 숫자 3개가 각각 무엇이고 어디에 있는지 맞춰보는 게임입니다.''')
             self.tflag += 1
         elif self.tflag == 1:
-            self.elab.config(text='''어떻게 하는지 이해해보기 위해 직접 해봅시다.
+            self.elab.config(text='''
+            
+            
+            
+            어떻게 하는지 이해해보기 위해 직접 해봅시다.
             게임은 수비 플레이어가 투수가 되어 숫자 세개를 상대방에게 던지면서 시작합니다.
             세 숫자는 모두 달라야 합니다.
             숫자 3 6 5을 입력해보세요.''')
@@ -382,39 +402,63 @@ class Tutorial(Frame):
             self.play1()
         elif self.tflag == 3:
             self.explain_frame.place(x=200, y=200)
-            self.elab.config(text='''잘 하셨습니다!
+            self.elab.config(text='''
+            
+            
+            
+            잘 하셨습니다!
             이제 적(컴퓨터)이 당신이 던진 숫자 3개의 합을 보고 숫자를 예측합니다.
             상대가 맞추면 베이스로 나가게 되어 득점의 기회를 얻게 됩니다.
             하지만 수비쪽에서도 이를 다시 한번 방어할 기회가 있습니다.''')
             self.tflag += 1
         elif self.tflag == 4:
-            self.elab.config(text='''적이 숫자를 입력했는데 일정 개수 이상 맟춘다면
+            self.elab.config(text='''
+            
+            
+            
+            적이 숫자를 입력했는데 일정 개수 이상 맟춘다면
             상대방은 안타를 치게 됩니다. 이때가 바로 당신의 수비 기회입니다.
             수비하라는 메세지가 뜨면 내가 보낸 숫자와 적이 예측한 숫자가
             얼마나 다를지 예측해야 합니다.''')
             self.tflag += 1
         elif self.tflag == 5:
-            self.elab.config(text='''실제로 해보겠습니다.
+            self.elab.config(text='''
+            
+            
+            
+            실제로 해보겠습니다.
             당신이 보낸 365와 87만큼 차이난다고 예측했다고 합시다.
-            예측 숫자에 87을 입력해주세요''')
+            예측 숫자에 0 8 7을 입력해주세요''')
             self.tflag += 1
         elif self.tflag == 6:
             self.explain_frame.place_forget()
             self.play2()
         elif self.tflag == 7:
             self.explain_frame.place(x=200, y=200)
-            self.elab.config(text='''잘 하셨습니다!
+            self.elab.config(text='''
+            
+            
+            
+            잘 하셨습니다!
             예측한 오차가 100보다 작으면 수비에 성공하여 적을 아웃시킵니다.
             200보다 작고 100보다 크다면 다시 한번 예측할 기회를 갖게 됩니다.
             기존에 예측한 것보다 적의 숫자에 다가가야겠죠?''')
             self.tflag += 1
         elif self.tflag == 8:
-            self.elab.config(text='''이번엔 공격을 연습해봅시다.
+            self.elab.config(text='''
+            
+            
+            
+            이번엔 공격을 연습해봅시다.
             공격 플레이어는 상대방이 던진 숫자 3개의 합을 보고
             적이 어떤 숫자를 입력했는지 예상합니다.''')
             self.tflag += 1
         elif self.tflag == 9:
-            self.elab.config(text='''이때 예측하는 숫자의 합이 꼭 적이 던진 수가 아니여도 됩니다.
+            self.elab.config(text='''
+            
+            
+            
+            이때 예측하는 숫자의 합이 꼭 적이 던진 수가 아니여도 됩니다.
             예측되는 숫자를 전략적으로 제시해보세요.
             상대방이 9 라고 제시했을 때 당신은 어떤 숫자 3개라고 생각하시나요?''')
             self.tflag += 1
@@ -423,12 +467,20 @@ class Tutorial(Frame):
             self.play3()
         elif self.tflag == 11:
             self.explain_frame.place(x=200, y=200)
-            self.elab.config(text='''잘 하셨습니다!
+            self.elab.config(text='''
+            
+            
+            
+            잘 하셨습니다!
             이렇게 공격에 성공하여 홈런을 하거나 안타를 통해
             주자를 홈까지 보내면 득점하게 됩니다.''')
             self.tflag += 1
         elif self.tflag == 12:
-            self.elab.config(text='''이제 게임 진행이 이해되시나요?
+            self.elab.config(text='''
+            
+            
+            
+            이제 게임 진행이 이해되시나요?
             만약 잘 이해되지 않는다면 한번 더 튜토리얼을 플레이하시고
             이해된다면 게임 시작을 통해 실제 게임을 플레이해보세요!''')
             self.tflag += 1
@@ -470,7 +522,6 @@ class Tutorial(Frame):
             self.atn.box13.config(text=str(self.but.n.get()))
             self.atn.master.update()
             pitch_flag = 1
-            time.sleep(0.5)
 
         self.tflag += 1
         self.tutorial()
@@ -482,22 +533,35 @@ class Tutorial(Frame):
         self.but.button_reset()
         self.but.button0.config(text='0', state='normal')
         self.master.update()
+        def_flag = 0
         while self.d_list != [0, 8, 7]:
+            self.d_list = [0, 0, 0]
+            self.atn.box2_reset()
+            if def_flag == 1:
+                self.atn.lab3.config(text='다시 0 8 7을 입력해보세요')
+                self.atn.master.update()
+
             self.wait_variable(self.but.n)
-            self.d_list.append(self.but.n.get())
+            self.d_list[0] = self.but.n.get()
             self.atn.box21.config(text=str(self.but.n.get()))
+            self.but.button_reset()
+            self.but.button0.config(text='0', state='normal')
             self.atn.master.update()
 
             self.wait_variable(self.but.n)
-            self.d_list.append(self.but.n.get())
+            self.d_list[1] = self.but.n.get()
             self.atn.box22.config(text=str(self.but.n.get()))
+            self.but.button_reset()
+            self.but.button0.config(text='0', state='normal')
             self.atn.master.update()
 
             self.wait_variable(self.but.n)
-            self.d_list.append(self.but.n.get())
+            self.d_list[2] = self.but.n.get()
             self.atn.box23.config(text=str(self.but.n.get()))
+            self.but.button_reset()
+            self.but.button0.config(text='0', state='normal')
             self.atn.master.update()
-            time.sleep(0.5)
+            def_flag = 1
         messagebox.showerror("수비 성공", "수비 성공! 적을 아웃시켰습니다.")
         self.tflag += 1
         self.tutorial()
@@ -510,29 +574,38 @@ class Tutorial(Frame):
         self.master.update()
         time.sleep(0.5)
         player_hit = []
+        hit_flag = 0
         coms = 9
 
         while player_hit != [5, 1, 3]:
+            player_hit = [0, 0, 0]
+            self.atn.all_reset()
+            self.but.button_reset()
+            self.atn.master.update()
             self.atn.pitch_update(coms)  # 컴퓨터가 던진 수 합
             self.atn.lab2.config(text='당신이 고른 수는')
             self.atn.lab3.config(text='5 1 3을 입력해보세요')
+            if hit_flag == 1:
+                self.atn.lab3.config(text='다시 5 1 3을 입력해보세요')
+                self.atn.master.update()
             self.atn.master.update()
 
             self.wait_variable(self.but.n)
-            player_hit.append(self.but.n.get())
+            player_hit[0] = self.but.n.get()
             self.atn.box21.config(text=str(self.but.n.get()))
             self.atn.master.update()
 
             self.wait_variable(self.but.n)
-            player_hit.append(self.but.n.get())
+            player_hit[1] = self.but.n.get()
             self.atn.box22.config(text=str(self.but.n.get()))
             self.atn.master.update()
 
             self.wait_variable(self.but.n)
-            player_hit.append(self.but.n.get())
+            player_hit[2] = self.but.n.get()
             self.atn.box23.config(text=str(self.but.n.get()))
             self.atn.master.update()
-            time.sleep(0.5)
+            hit_flag = 1
+
         messagebox.showinfo("홈런", "축하합니다! 홈런입니다!")
         self.tflag += 1
         self.tutorial()
@@ -868,11 +941,11 @@ def user_defense(player_pitch, c_hit, d_list):  # 수비수가 타자의 오차 
     d_predict = sum(d_list)
     hit_margin = defense_num(player_pitch, c_hit)  # 타자의 오차
     defense_margin = abs(d_predict - hit_margin)  # 수비수의 오차
-    if defense_margin <= 50:
+    if defense_margin <= 100:
         defen = 1
         return defen
 
-    elif defense_margin <= 100:
+    elif defense_margin <= 200:
         defen = 2
         return defen
     else:
@@ -902,11 +975,11 @@ def com_defense(com_pitch, player_hit):  # 수비수(컴퓨터)가 타자의 오
     com_defense_predict = rd.randint(1, 987 - 123)  # 수비자(컴퓨터)가 예측한 오차값
     hit_margin = cdefense_num(com_pitch, player_hit)  # 실제 오차
     defense_margin = abs(com_defense_predict - hit_margin)  # 실제 값과 오차값의 차
-    if defense_margin <= 50:
+    if defense_margin <= 100:
         defen = 1  # 수비성공
         return defen
 
-    elif defense_margin <= 100:
+    elif defense_margin <= 200:
         com_defense(com_pitch, player_hit)
 
     else:
