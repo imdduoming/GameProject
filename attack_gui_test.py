@@ -102,3 +102,4 @@ button9.grid(column='4', row='1')
 # 기타
 
 window.mainloop()
+print(f_base)
