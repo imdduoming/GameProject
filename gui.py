@@ -983,7 +983,7 @@ def com_defense(com_pitch, player_hit):  # 수비수(컴퓨터)가 타자의 오
         return defen
 
     elif defense_margin <= 200:
-        com_defense(com_pitch, player_hit)
+        return com_defense(com_pitch, player_hit)
 
     else:
         defen = 0
