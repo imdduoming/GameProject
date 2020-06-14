@@ -1051,6 +1051,7 @@ def attack_score(user_decision, defen, strikeNum, ballNum, outNum):  # 타자의
     if strikeNum == 3:
         outNum += 1
         strikeNum = 0
+        ballNum = 0
     return strikeNum, ballNum, outNum
 
 
