@@ -98,13 +98,13 @@ class ResultPage(Frame):
         self.tot.pack()
         self.blab1 = Label(self, height='10')
         self.blab1.pack()
-        self.pg_button = Button(self, text='진행', command=self.progress, width='20', height='5')
+        self.pg_button = Button(self, text='진행', command=lambda: self.progress(master), width='20', height='5')
         if half_game == '말' and inning_num == gameNum:
             self.pg_button.config(text='종료')
         self.pg_button.pack()
 
     # noinspection PyMethodMayBeStatic
-    def progress(self):
+    def progress(self, master):
         global half_game, inning_num
         if half_game == '말':
             if inning_num == gameNum:
@@ -114,20 +114,20 @@ class ResultPage(Frame):
                     messagebox.showinfo("무승부", "무승부입니다.")
                 else:
                     messagebox.showerror("패배", "당신의 패배입니다.")
-                self.master.switch_frame(GameMain)
+                master.switch_frame(StartPage)
             else:
                 inning_num += 1
                 half_game = '초'
                 if player == '선공':
-                    self.master.switch_frame(PlayerAttack)
+                    master.switch_frame(PlayerAttack)
                 elif player == '후공':
-                    self.master.switch_frame(ComAttack)
+                    master.switch_frame(ComAttack)
         elif half_game == '초':
             half_game = '말'
             if player == '선공':
-                self.master.switch_frame(ComAttack)
+                master.switch_frame(ComAttack)
             elif player == '후공':
-                self.master.switch_frame(PlayerAttack)
+                master.switch_frame(PlayerAttack)
 
 
 class PlayerAttack(Frame):
@@ -286,7 +286,8 @@ class ComAttack(Frame):
 
             if (((
                          user_decision != 'homerun' and user_decision != 'foul') and user_decision != 'strike') and user_decision != 'ball'):
-                while defen >= 2:
+                while defen > 1:
+                    self.d_list = []
                     self.player_defense()
                     defen = user_defense(player_pitch, c_hit, self.d_list)
                     if defen == 1:
@@ -299,9 +300,10 @@ class ComAttack(Frame):
                                                                   outNum)
                         break
                     else:
-                        self.atn.lab3.config(text='다시 입력해 주세요.')
+                        self.atn.lab2.config(text='실제 오차와 가깝습니다!')
+                        self.atn.lab3.config(text='다시 예측해보세요.')
                         self.master.update()
-                        time.sleep(1.5)
+                        time.sleep(2)
             else:
                 strikeNum, ballNum, outNum = attack_score(user_decision, 0, strikeNum, ballNum,
                                                           outNum)
@@ -941,6 +943,7 @@ def user_defense(player_pitch, c_hit, d_list):  # 수비수가 타자의 오차 
     d_predict = 100*d_list[0] + 10*d_list[1] + d_list[2]
     hit_margin = defense_num(player_pitch, c_hit)  # 타자의 오차
     defense_margin = abs(d_predict - hit_margin)  # 수비수의 오차
+    # print(player_pitch, c_hit, d_list, d_predict, hit_margin, defense_margin)
     if defense_margin <= 100:
         defen = 1
         return defen
