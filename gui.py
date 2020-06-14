@@ -938,7 +938,7 @@ def defense_num(player_pitch_list, c_hit):  # 투수의 수와 타자의 수 오
 
 
 def user_defense(player_pitch, c_hit, d_list):  # 수비수가 타자의 오차 예측하기
-    d_predict = sum(d_list)
+    d_predict = 100*d_list[0] + 10*d_list[1] + d_list[2]
     hit_margin = defense_num(player_pitch, c_hit)  # 타자의 오차
     defense_margin = abs(d_predict - hit_margin)  # 수비수의 오차
     if defense_margin <= 100:
