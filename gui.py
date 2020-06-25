@@ -2,24 +2,23 @@ from tkinter import *
 import random as rd
 import time
 from tkinter import messagebox
-from PIL import Image as pim
+from PIL import Image as pim  # png 이미지 활용을 위해 사용
 from PIL import ImageTk as pit
 
 
 # ------tk, 프레임 클래스--------
 
 
-class GameMain(Tk):
-    def __init__(self):
+class GameMain(Tk):  # Tk(프로그램) 클래스
+    def __init__(self):  # 초기화 - 화면 크기, 크기 조정 불가능 설정
         Tk.__init__(self)
         self.geometry("1200x900")
         self.title("야구 게임")
         self.resizable(False, False)
-        # self.pack_propagate(0)
         self.frame = None
         self.switch_frame(StartPage)
 
-    def switch_frame(self, frame_class):
+    def switch_frame(self, frame_class):  # 창 전환 함수
         new_frame = frame_class(self)
         if self.frame is not None:
             self.frame.destroy()
@@ -27,7 +26,7 @@ class GameMain(Tk):
         self.frame.pack()
 
 
-class StartPage(Frame):
+class StartPage(Frame):  # 최초 페이지
     def __init__(self, master):
         Frame.__init__(self, master, bg='#509134', width='1200', height='900')
         self.grid_propagate(0)
@@ -44,7 +43,7 @@ class StartPage(Frame):
         self.but3.grid(column='2', row='0', padx=125, pady=650)
 
 
-class NewGame(Frame):
+class NewGame(Frame):  # 게임 시작 페이지, 이름과 횟수를 설정
     def __init__(self, master):
         Frame.__init__(self, master, width='1200', height='900')
         self.grid_propagate(0)
@@ -64,7 +63,7 @@ class NewGame(Frame):
                            width='20', height='6', font=("맑은 고딕", 20))
         self.but1.grid(column='1', row='2', padx='100', pady='50')
 
-    def game_start(self, master):
+    def game_start(self, master):  # 게임 시작 버튼 작동함수
         if 1 <= int(self.ent2.get()) <= 9:
             global playerOp, player, playerName, gameNum, inning_num
             player = rd.choice(playerOp)
@@ -84,7 +83,7 @@ class NewGame(Frame):
             messagebox.showwarning("게임 횟수", "게임 횟수를 재설정해주세요.\n (1~9) ")
 
 
-class ResultPage(Frame):
+class ResultPage(Frame):  # 결과 페이지, 게임 진행을 연결, 끝났을지 결과를 표출하고 종료
     def __init__(self, master):
         Frame.__init__(self, master, width='1200', height='900')
         self.pack_propagate(0)
@@ -104,7 +103,7 @@ class ResultPage(Frame):
         self.pg_button.pack()
 
     # noinspection PyMethodMayBeStatic
-    def progress(self, master):
+    def progress(self, master):  # 진행 버튼 작동함수수
         global half_game, inning_num
         if half_game == '말':
             if inning_num == gameNum:
@@ -130,7 +129,7 @@ class ResultPage(Frame):
                 master.switch_frame(PlayerAttack)
 
 
-class PlayerAttack(Frame):
+class PlayerAttack(Frame):  # 공격 화면 함수
     def __init__(self, master):
         Frame.__init__(self, master, width='1200', height='900')
         self.bgimg = pit.PhotoImage(pim.open('background.png'))
@@ -150,7 +149,7 @@ class PlayerAttack(Frame):
         self.start_button = Button(self, text='시작', width="25", height="8", command=self.play, font=("맑은 고딕", 15))
         self.start_button.place(x=475, y=300)
 
-    def play(self):
+    def play(self):  # 공격 게임 진행함수
         self.start_button.destroy()
         strikeNum = 0
         ballNum = 0
@@ -172,10 +171,12 @@ class PlayerAttack(Frame):
             com_pitch = rd.sample(num_list, 3)  # 수비자(컴퓨터)의 투구(리스트)
             coms = sum(com_pitch)
 
+            # 숫자 표시부분 초기화
             self.atn.pitch_update(coms)  # 컴퓨터가 던진 수 합
             self.atn.lab2.config(text='당신이 고른 수는')
             self.atn.master.update()
 
+            # 플레이어의 입력을 받는 부분
             self.wait_variable(self.but.n)
             player_hit.append(self.but.n.get())
             self.atn.box21.config(text=str(self.but.n.get()))
@@ -215,7 +216,7 @@ class PlayerAttack(Frame):
         self.master.switch_frame(ResultPage)
 
 
-class ComAttack(Frame):
+class ComAttack(Frame):  # 수비 게임 화면
     def __init__(self, master):
         Frame.__init__(self, master, width='1200', height='900')
         self.bgimg = pit.PhotoImage(pim.open('background.png'))
@@ -236,7 +237,7 @@ class ComAttack(Frame):
         self.start_button.place(x=475, y=300)
         self.d_list = []
 
-    def play(self):
+    def play(self):  # 수비 게임 진행함수
         self.start_button.destroy()
         strikeNum = 0
         ballNum = 0
@@ -258,6 +259,7 @@ class ComAttack(Frame):
             self.atn.lab1.config(text='숫자 세개를 골라주세요!')
             self.atn.master.update()
 
+            # 플레이어의 입력을 받는 부분
             self.wait_variable(self.but.n)
             player_pitch.append(self.but.n.get())
             self.atn.box11.config(text=str(self.but.n.get()))
@@ -345,7 +347,7 @@ class ComAttack(Frame):
         self.atn.master.update()
 
 
-class Tutorial(Frame):
+class Tutorial(Frame):  # 튜토리얼 화면 함수
     def __init__(self, master):
         Frame.__init__(self, master, width='1200', height='900')
         self.bgimg = pit.PhotoImage(pim.open('background.png'))
@@ -379,7 +381,7 @@ class Tutorial(Frame):
         self.ebtn.pack(side='bottom', anchor='center', pady=10)
         self.tflag = 0
 
-    def tutorial(self):
+    def tutorial(self):  # flag가 올라갈때마다 진행됨
         if self.tflag == 0:
             self.elab.config(text='''
             
@@ -615,7 +617,7 @@ class Tutorial(Frame):
 
 #  ---------화면구성요소---------
 
-class BaseFrame(Frame):
+class BaseFrame(Frame):  # 진루 상황 부분 프레임
     def __init__(self, master):
         Frame.__init__(self, master)
         self.config(width='200', height='200', relief='solid', bd='1')
@@ -640,7 +642,7 @@ class BaseFrame(Frame):
             self.c_base.create_polygon(56, 73, 20, 109, 56, 145, 92, 109, fill='white', outline='black')
 
 
-class SBO(Frame):
+class SBO(Frame):  # 스트라이크, 볼, 아웃 표시 부분
     def __init__(self, master):
         Frame.__init__(self, master)
         self.config(width='150', height='100', relief='solid', bd='1')
@@ -673,7 +675,7 @@ class SBO(Frame):
         self.O_count.config(text=o_st)
 
 
-class ScoreBoard(Frame):
+class ScoreBoard(Frame):  # 점수판 표시 프레임
     def __init__(self, master):
         Frame.__init__(self, master)
         self.config(width='200', height='150', relief='solid', bd='1')
@@ -717,7 +719,7 @@ class ScoreBoard(Frame):
         self.master.update()
 
 
-class BallButton(Frame):
+class BallButton(Frame):  # 버튼 입력부 프레임
     def __init__(self, master):
         Frame.__init__(self, master)
         self.config(width='400', height='200', relief='solid', bd='1')
@@ -774,7 +776,7 @@ class BallButton(Frame):
         self.button9.config(state='normal')
 
 
-class attackNum(Frame):
+class attackNum(Frame):  # 공수 숫자 표시 프레임
     def __init__(self, master):
         Frame.__init__(self, master)
         self.config(width='300', height='300', relief='solid', bd='1')
@@ -827,7 +829,7 @@ class attackNum(Frame):
         self.box13.config(text=ofactor)
 
 
-class TotalScore(Frame):
+class TotalScore(Frame):  # 종합 점수판 프레임
     def __init__(self, master):
         Frame.__init__(self, master)
         self.config(width='800', height='600', relief='solid', bd='1')
@@ -940,7 +942,7 @@ def defense_num(player_pitch_list, c_hit):  # 투수의 수와 타자의 수 오
 
 
 def user_defense(player_pitch, c_hit, d_list):  # 수비수가 타자의 오차 예측하기
-    d_predict = 100*d_list[0] + 10*d_list[1] + d_list[2]
+    d_predict = 100 * d_list[0] + 10 * d_list[1] + d_list[2]
     hit_margin = defense_num(player_pitch, c_hit)  # 타자의 오차
     defense_margin = abs(d_predict - hit_margin)  # 수비수의 오차
     # print(player_pitch, c_hit, d_list, d_predict, hit_margin, defense_margin)
